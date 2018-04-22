@@ -15,7 +15,7 @@ public class Order {
         this.tax = new BigDecimal(0.1);
     }
 
-    BigDecimal calculate() {
+    BigDecimal calculate() throws Exception {
 
         Calculator calculator = new Calculator();
         BigDecimal subTotal = calculator.getSubTotal();
@@ -41,7 +41,10 @@ public class Order {
             return subTotal;
         }
 
-        BigDecimal getTax() {
+        BigDecimal getTax() throws Exception {
+            if (null == subTotal) {
+                throw new Exception("Should Calculate subTotal at First!");
+            }
             return subTotal.multiply(Order.this.tax);
         }
 
