@@ -15,34 +15,35 @@ public class Order {
         this.tax = new BigDecimal(0.1);
     }
 
-    public BigDecimal calculate() {
-        BigDecimal subTotal;
+    BigDecimal calculate() {
 
-        subTotal = calculateTotal();
-        subTotal = subTotal.subtract(calculateDiscounts());
+        Calculator calculator = new Calculator();
+        BigDecimal subTotal = calculator.getSubTotal();
+        BigDecimal tax = calculator.getTax();
 
-        // calculate tax
-        BigDecimal tax = subTotal.multiply(this.tax);
-
-        // calculate GrandTotal
-        BigDecimal grandTotal = subTotal.add(tax);
-
-        return grandTotal;
+        return subTotal.add(tax);
     }
 
-    private BigDecimal calculateDiscounts() {
-        BigDecimal totalDiscount = new BigDecimal(0);
-        for (BigDecimal discount : discounts) {
-            totalDiscount = totalDiscount.add(discount);
-        }
-        return totalDiscount;
-    }
+    private class Calculator {
+        private BigDecimal subTotal;
 
-    private BigDecimal calculateTotal() {
-        BigDecimal total = new BigDecimal(0);
-        for (OrderLineItem lineItem : orderLineItemList) {
-            total = total.add(lineItem.getPrice());
+        BigDecimal getSubTotal() {
+            subTotal = new BigDecimal(0);
+
+            for (OrderLineItem lineItem : orderLineItemList) {
+                subTotal = subTotal.add(lineItem.getPrice());
+            }
+
+            for (BigDecimal discount : discounts) {
+                subTotal = subTotal.subtract(discount);
+            }
+
+            return subTotal;
         }
-        return total;
+
+        BigDecimal getTax() {
+            return subTotal.multiply(Order.this.tax);
+        }
+
     }
 }
